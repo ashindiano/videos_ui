@@ -1,6 +1,5 @@
 const styles = {
   root: {
-    padding: '70px 20px',
     color: 'black',
   },
   uploader: {

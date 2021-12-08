@@ -1,8 +1,12 @@
+import { ThemeProvider } from '@mui/material/styles';
 import React from 'react';
-import FileUploader from './components/custom/file_uploader/file_uploader.component';
+import { useRoutes } from 'react-router';
+import routesConfig from './routes';
+import theme from './theme/theme';
 
 const App = function () {
-  return <FileUploader />;
+  const routes = useRoutes(routesConfig);
+  return <ThemeProvider theme={theme}>{routes}</ThemeProvider>;
 };
 
 export default App;
