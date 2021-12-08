@@ -66,7 +66,6 @@ const PrimarySearchAppBar = function (props) {
             onClick={handleProfileMenuOpen}
             size="large"
             edge="start"
-            color="inherit"
             aria-label="open drawer"
             sx={{ mr: 2 }}
           >
@@ -75,7 +74,7 @@ const PrimarySearchAppBar = function (props) {
 
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: 'flex' }}>
-            <AccountCircle />
+            <AccountCircle color="action" />
           </Box>
         </Toolbar>
       </AppBar>

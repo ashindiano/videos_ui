@@ -1,7 +1,7 @@
 import { videosApi } from '../../configs/api_endpoints.config';
 import ApiService from '../../services/api.service';
 
-const uploadSohData = async (key, uploadFile, params, progressEvent) => {
+const uploadVideo = async (key, uploadFile, params, progressEvent) => {
   return ApiService.uploadFile(
     videosApi.default,
     key,
@@ -11,8 +11,8 @@ const uploadSohData = async (key, uploadFile, params, progressEvent) => {
   );
 };
 
-const sohUploadActions = {
-  uploadSohData,
+const actions = {
+  uploadVideo,
 };
 
-export default sohUploadActions;
+export default actions;
