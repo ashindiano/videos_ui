@@ -1,0 +1,16 @@
+{
+  "extends": ["airbnb", "plugin:prettier/recommended", "prettier"],
+  "parser": "babel-eslint",
+  "parserOptions": { "sourceType": "module" },
+  "rules": {
+    "prettier/prettier": ["error", { "singleQuote": true }],
+    "quotes": [2, "single", { "avoidEscape": true }]
+  },
+  "globals": {
+    "window": true,
+    "document": true,
+    "fetch": true,
+    "Blob": true,
+    "FormData": true
+  }
+}
