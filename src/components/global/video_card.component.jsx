@@ -5,7 +5,7 @@ import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import PropTypes from 'prop-types';
 
-const VideoCard = function ({ title, url, thumbnail, onClick }) {
+const VideoCard = function ({ title, url, thumbnail, onClick, description }) {
   return (
     <Card sx={{ maxWidth: 345 }}>
       <CardMedia
@@ -19,11 +19,10 @@ const VideoCard = function ({ title, url, thumbnail, onClick }) {
       />
       <CardContent>
         <Typography gutterBottom variant="h6" component="div">
-          {title || 'No title'}
+          {title}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Lizards are a widespread group of squamate reptiles, with over 6,000
-          species, ranging across all continents except Antarctica
+          {description}
         </Typography>
       </CardContent>
     </Card>
@@ -32,14 +31,16 @@ const VideoCard = function ({ title, url, thumbnail, onClick }) {
 
 VideoCard.propTypes = {
   title: PropTypes.string,
+  description: PropTypes.string,
   thumbnail: PropTypes.string,
   url: PropTypes.string,
   onClick: PropTypes.func,
 };
 
 VideoCard.defaultProps = {
-  title: '',
+  title: 'No Title',
   thumbnail: '',
+  description: 'No description',
   url: '',
   onClick: () => {},
 };

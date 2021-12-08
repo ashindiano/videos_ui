@@ -2,7 +2,13 @@ import { withStyles } from '@mui/styles';
 import VideosWall from './index';
 
 const styles = () => ({
-  root: {},
+  noVideos: {
+    height: 300,
+    width: 'inherit',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   container: {
     display: 'flex',
     justifyContent: 'center',

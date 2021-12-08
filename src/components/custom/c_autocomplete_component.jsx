@@ -30,15 +30,15 @@ export default class CAutocomplete extends Component {
       onClearSelection,
       loading,
       sendValueOnChange,
+      required,
       ...other
     } = this.props;
     const selOptions = options === undefined || options === null ? [] : options;
 
     return (
       <Autocomplete
-        loading="true"
+        loading
         size="small"
-        tagSizeSmall
         onChange={
           sendValueOnChange
             ? (event, selection, reason) => {
@@ -57,6 +57,7 @@ export default class CAutocomplete extends Component {
         renderInput={(params) => (
           <TextField
             margin="dense"
+            required={required}
             variant="standard"
             label={label}
             error={error}
@@ -112,9 +113,10 @@ CAutocomplete.propTypes = {
   label: PropTypes.string,
   onChange: PropTypes.func,
   onInputChange: PropTypes.func,
-  value: PropTypes.string,
+  value: PropTypes.number,
   onClearSelection: PropTypes.func,
   sendValueOnChange: PropTypes.bool,
+  required: PropTypes.bool,
   selectionKey: PropTypes.string,
 };
 CAutocomplete.defaultProps = {
@@ -128,5 +130,6 @@ CAutocomplete.defaultProps = {
   value: undefined,
   onClearSelection: undefined,
   sendValueOnChange: false,
+  required: false,
   selectionKey: 'id',
 };

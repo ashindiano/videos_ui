@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { Button, IconButton, Typography, Box } from '@mui/material';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import ErrorIcon from '@mui/icons-material/Error';
@@ -8,14 +7,12 @@ import CComponent from '../../global/c.component';
 import styles from './styles';
 import theme from '../../../theme/theme';
 import LinearProgressWithLabel from '../linear_progress_with_label.component';
-import ApiService from '../../../services/api.service';
-import { videosApi } from '../../../configs/api_endpoints.config';
 
 class FileUploader extends CComponent {
   initialState = {
-    fileUploadStatus: [],
-    uploadedFileDetails: undefined,
-    isUploadProcessDialogOpen: false,
+    name: undefined,
+    file: undefined,
+    error: undefined,
   };
 
   constructor() {
@@ -23,101 +20,46 @@ class FileUploader extends CComponent {
     this.state = { ...this.initialState };
   }
 
-  reset = () => {
-    this.setState({ ...this.initialState });
-  };
+  reset = () => this.setState({ ...this.initialState });
 
-  closeUploadProcessDialog = () =>
-    this.updateState({ isUploadProcessDialogOpen: false });
-
-  isSubmitReady = () => {
-    if (this.state.fileUploadStatus.length === 0) return false;
-    const resp = this.state.fileUploadStatus.map((s) => {
-      if (s.percentageCompleted === 100) return 'completed';
-      return undefined;
-    });
-    return resp.includes('completed');
-  };
-
-  isAttaching = () => {
-    // return true: attaching,  false: attach complete ,undefined: Attachment not triggered
-    if (this.state.fileUploadStatus.length === 0) return undefined;
-    const resp = this.state.fileUploadStatus.map((s) => {
-      return (s.percentageCompleted && s.percentageCompleted !== 100) === true;
-    });
-    return !resp.includes(false);
+  isUploading = () => {
+    const { percentageCompleted } = this.props;
+    return (
+      this.state.file && percentageCompleted && percentageCompleted !== 100
+    );
   };
 
   onDrop = (files) => {
     if (files[0]) {
+      const file = files[0];
+      this.props.onDrop(file);
       this.updateState({
-        fileUploadStatus: [
-          {
-            name: files[0].name,
-            file: files[0],
-            percentageCompleted: 0,
-          },
-        ],
+        name: file.name,
+        file,
       });
-      ApiService.uploadFile(
-        videosApi.default,
-        'file',
-        files[0],
-        {},
-        (percentageCompleted, cancelToken) => {
-          if (percentageCompleted <= 100)
-            this.updateState({
-              fileUploadStatus: [
-                {
-                  percentageCompleted,
-                  cancelToken,
-                },
-              ],
-            });
-        }
-      )
-        .then((res) => {
-          if (res.data) {
-            this.updateState({
-              fileUploadStatus: [
-                {
-                  percentageCompleted: 100,
-                  cancelToken: undefined,
-                },
-              ],
-            });
-          }
-        })
-        .catch((err) => {
-          this.updateState({
-            fileUploadStatus: [
-              {
-                error: err,
-                percentageCompleted: undefined,
-                cancelToken: undefined,
-              },
-            ],
-          });
-        });
     }
   };
 
-  submit = async () => {
-    const uploadedFileDetails = this.state.fileUploadStatus.map((status) => ({
-      id: status.id,
-      ext: status.ext,
-      name: status.name,
-    }));
-
-    this.updateState({ uploadedFileDetails, isUploadProcessDialogOpen: true });
-  };
-
   render() {
-    const { fileUploadStatus } = this.state;
-    const isAttaching = this.isAttaching();
+    const { name, file } = this.state;
+    const isUploading = this.isUploading();
+    const {
+      mimeTypes,
+      onSubmit,
+      enableUpload,
+      percentageCompleted,
+      error,
+      cancelToken,
+      uploadSucceeded,
+    } = this.props;
+
     return (
-      <div style={styles.root}>
-        <Dropzone multiple={false} onDrop={this.onDrop} accept=".mp4,.mov">
+      <div>
+        <Dropzone
+          multiple={false}
+          onDrop={this.onDrop}
+          accept={mimeTypes || '.mp4,.mov'}
+        >
           {({ getRootProps, getInputProps }) => (
             <section>
               <div
@@ -137,12 +79,63 @@ class FileUploader extends CComponent {
           )}
         </Dropzone>
 
-        <Typography color="primary" variant="subtitle2">
-          Note:
-        </Typography>
-        <div sx={styles.notes}>
-          <ol>
-            <li sx={styles.bottomSpace}>
+        {isUploading === true && (
+          <Typography variant="body1" color="primary">
+            Uploading Video ...
+          </Typography>
+        )}
+
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
+          {file && (
+            <IconButton
+              onClick={() => {
+                if (cancelToken)
+                  cancelToken.cancel('request cancelled by user');
+                this.reset();
+              }}
+            >
+              <DeleteOutlinedIcon color="error" fontSize="small" />
+            </IconButton>
+          )}
+          {error && <ErrorIcon color="error" fontSize="small" />}
+          <Typography variant="subtitle2"> {name} </Typography>
+
+          {file && percentageCompleted && (
+            <Box sx={{ minWidth: '200px' }}>
+              <LinearProgressWithLabel value={percentageCompleted} />
+            </Box>
+          )}
+          {uploadSucceeded && (
+            <Typography color="primary" variant="caption">
+              Video uploaded succesfully!!!
+            </Typography>
+          )}
+        </div>
+        <div style={styles.uploadButton}>
+          <Button
+            size="small"
+            variant="contained"
+            color="primary"
+            onClick={() => onSubmit(file)}
+            disabled={
+              !file || isUploading || enableUpload === false || uploadSucceeded
+            }
+            sx={{ minWidth: '200px' }}
+          >
+            Upload
+          </Button>
+        </div>
+        <Box sx={{ paddingTop: '30px' }}>
+          <Typography color="primary" variant="subtitle2">
+            Note:
+          </Typography>
+          <ol style={{ margin: 0 }}>
+            <li>
               <Typography variant="body2">
                 Only
                 <span
@@ -157,61 +150,7 @@ class FileUploader extends CComponent {
               </Typography>
             </li>
           </ol>
-        </div>
-
-        {
-          // eslint-disable-next-line no-nested-ternary
-          isAttaching === true && (
-            <Typography variant="body1" color="primary">
-              Uploading Video ...
-            </Typography>
-          )
-        }
-        {fileUploadStatus.map((status, index) => (
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-            }}
-          >
-            {!status.error && (
-              <IconButton
-                onClick={() => {
-                  if (status.cancelToken)
-                    status.cancelToken.cancel('request cancelled by user');
-                  this.setState((state) => {
-                    // eslint-disable-next-line no-param-reassign
-                    state.fileUploadStatus.splice(index, 1);
-                    return { ...state };
-                  });
-                }}
-              >
-                <DeleteOutlinedIcon color="error" fontSize="small" />
-              </IconButton>
-            )}
-            {status.error && <ErrorIcon color="error" fontSize="small" />}
-            <Typography variant="caption">{status.name}</Typography>
-            &nbsp;&nbsp;
-            {status?.percentageCompleted < 100 && (
-              <Box sx={{ minWidth: 150 }}>
-                <LinearProgressWithLabel value={status.percentageCompleted} />
-              </Box>
-            )}
-          </div>
-        ))}
-        {this.isSubmitReady() && (
-          <div style={{ padding: 30 }}>
-            <Button
-              size="small"
-              variant="contained"
-              color="primary"
-              onClick={this.submit}
-              sx={styles.uploadBtn}
-            >
-              Submit
-            </Button>
-          </div>
-        )}
+        </Box>
       </div>
     );
   }
