@@ -13,8 +13,8 @@ export default class VideosWall extends CComponent {
   };
 
   componentDidMount = () => {
-    actions.getVideos().then((videos) => {
-      this.updateState({ videos });
+    actions.getVideos().then((res) => {
+      this.updateState({ videos: res.videos });
     });
   };
 
