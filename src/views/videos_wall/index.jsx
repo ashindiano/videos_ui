@@ -43,6 +43,7 @@ export default class VideosWall extends CComponent {
                   key={item.id}
                   title={item.title}
                   description={item.description}
+                  category={item.category}
                   url={process.env.REACT_APP_PUBLIC_DOMAIN + item.video.url}
                   thumbnail={
                     process.env.REACT_APP_PUBLIC_DOMAIN + item.video.thumb.url

@@ -5,7 +5,14 @@ import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import PropTypes from 'prop-types';
 
-const VideoCard = function ({ title, url, thumbnail, onClick, description }) {
+const VideoCard = function ({
+  title,
+  url,
+  thumbnail,
+  onClick,
+  description,
+  category,
+}) {
   return (
     <Card sx={{ maxWidth: 345 }}>
       <CardMedia
@@ -18,10 +25,18 @@ const VideoCard = function ({ title, url, thumbnail, onClick, description }) {
         alt="green iguana"
       />
       <CardContent>
-        <Typography gutterBottom variant="h6" component="div">
-          {title}
+        <Typography gutterBottom variant="h6" component="span">
+          {title}&nbsp;
         </Typography>
-        <Typography variant="body2" color="text.secondary">
+        <Typography
+          gutterBottom
+          variant="subtitle2"
+          component="span"
+          color="grey"
+        >
+          | {category.name}
+        </Typography>
+        <Typography variant="body2" color="primary">
           {description}
         </Typography>
       </CardContent>
@@ -35,6 +50,10 @@ VideoCard.propTypes = {
   thumbnail: PropTypes.string,
   url: PropTypes.string,
   onClick: PropTypes.func,
+  category: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    name: PropTypes.string,
+  }).isRequired,
 };
 
 VideoCard.defaultProps = {
