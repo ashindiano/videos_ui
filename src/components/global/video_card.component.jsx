@@ -36,7 +36,7 @@ const VideoCard = function ({
         >
           | {category.name}
         </Typography>
-        <Typography variant="body2" color="primary">
+        <Typography variant="body2" color="text.secondary">
           {description}
         </Typography>
       </CardContent>

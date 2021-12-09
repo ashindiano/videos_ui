@@ -46,7 +46,7 @@ export default class VideoUpload extends CComponent {
             setTimeout(() => {
               this.uploaderRef.current.reset();
               this.reset();
-            }, 2000);
+            }, 4000);
           }
         }
       )
