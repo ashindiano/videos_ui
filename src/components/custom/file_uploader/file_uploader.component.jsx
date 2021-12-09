@@ -12,7 +12,6 @@ class FileUploader extends CComponent {
   initialState = {
     name: undefined,
     file: undefined,
-    error: undefined,
   };
 
   constructor() {
@@ -52,7 +51,7 @@ class FileUploader extends CComponent {
       cancelToken,
       uploadSucceeded,
     } = this.props;
-
+    console.log(this.props);
     return (
       <div>
         <Dropzone
@@ -91,7 +90,7 @@ class FileUploader extends CComponent {
             alignItems: 'center',
           }}
         >
-          {file && (
+          {file && !error && (
             <IconButton
               onClick={() => {
                 if (cancelToken)

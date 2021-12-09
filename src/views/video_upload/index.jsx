@@ -8,8 +8,8 @@ import actions from './actions';
 
 export default class VideoUpload extends CComponent {
   initialState = {
-    title: undefined,
-    description: undefined,
+    title: '',
+    description: '',
     categories: undefined,
     categoryId: undefined,
     file: undefined,
@@ -78,7 +78,8 @@ export default class VideoUpload extends CComponent {
   }
 
   render() {
-    const { classes, uploadError } = this.props;
+    const { classes } = this.props;
+    const { uploadError } = this.state;
     const {
       title,
       categories,
@@ -124,7 +125,7 @@ export default class VideoUpload extends CComponent {
           <FileUploader
             ref={this.uploaderRef}
             uploadSucceeded={uploadDone}
-            enableUpload={!!(title && categoryId)}
+            enableUpload={title !== '' && !!categoryId}
             onDrop={this.onDrop}
             onSubmit={this.uploadVideo}
             error={uploadError}
